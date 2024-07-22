@@ -1,6 +1,7 @@
 import 'package:chat_app/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
@@ -20,14 +21,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Chat app',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return ProviderScope(
+      child: MaterialApp(
+        title: 'Chat App',
+        darkTheme: ThemeData.dark(),
+        themeMode: ThemeMode.dark,
+        routes: Routes.init(context),
+        initialRoute: '/splash',
+        debugShowCheckedModeBanner: false,
       ),
-      routes: Routes.init(context),
-      initialRoute: '/home',
     );
   }
 }

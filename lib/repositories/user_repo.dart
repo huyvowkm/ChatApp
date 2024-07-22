@@ -18,16 +18,18 @@ class UserRepo {
     return _instance;
   }
 
-  Future<void> signInWithPassword(String email, String password) async {
+  Future<User?> signInWithPassword(String email, String password) async {
     final authResponse = await _userRemote!.signInWithPassword(email, password);
     user = authResponse.user;
     log(authResponse.session.toString());
+    return user;
   }
 
-  Future<void> signUp(String email, String password) async {
-    final authResponse = await _userRemote!.signUp(email, password);
+  Future<User?> signUp(String name, String email, String password) async {
+    final authResponse = await _userRemote!.signUp(name, email, password);
     user = authResponse.user;
     log(authResponse.session.toString());
+    return user;
   }
 
   Future<void> signOut() async {

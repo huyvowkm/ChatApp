@@ -11,6 +11,22 @@ class HomeView extends ConsumerStatefulWidget {
 class _HomeViewState extends ConsumerState<HomeView> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: _appBar(),
+      body: _body(),
+    );
+  }
+
+  AppBar _appBar() {
+    return AppBar(
+      title: const Text('Chat', style: TextStyle(fontSize: 30)),
+    );
+  }
+
+  Widget _body() {
+    return Container(
+      padding: const EdgeInsets.all(15),
+      child: const Text('Home')
+    );
   }
 }
