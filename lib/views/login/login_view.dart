@@ -13,29 +13,26 @@ class LoginView extends ConsumerStatefulWidget {
 
 class _LoginState extends ConsumerState<LoginView> {
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appBar(),
       body: _body(context)
     );
-  }
-
-  AppBar _appBar() {
-    return AppBar();
   }
 
   Widget _body(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.all(15),
       children: [
-        const SizedBox(height: 100),
+        const SizedBox(height: 180),
         const Text('Chat App', textAlign: TextAlign.center, style: TextStyle(fontSize: 30)),
         const SizedBox(height: 30),
         const LoginFormWidget(),
         ElevatedButton(
           onPressed: () async {
+            if (!ref.read(loginViewModel).formKey.currentState!.validate()) {
+              return;
+            }
             final user = await ref.read(loginViewModel).signInWithPassword();
             if (user != null) {
               Navigator.pushReplacementNamed(context, '/home');
@@ -64,5 +61,4 @@ class _LoginState extends ConsumerState<LoginView> {
       ] 
     );
   }
-
 }

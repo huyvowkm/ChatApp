@@ -11,7 +11,7 @@ class RegisterFormWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     const formSpacer = SizedBox(height: 10);
     return Form(
-      key: ref.read(registerViewModel).formKey,
+      key: ref.watch(registerViewModel).formKey,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -34,7 +34,7 @@ class RegisterFormWidget extends ConsumerWidget {
           ),
           formSpacer,
           TextFormField(
-            validator: validateEmpty,
+            validator: validateEmail,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             controller: ref.read(registerViewModel).emailController,
             keyboardType: TextInputType.emailAddress,

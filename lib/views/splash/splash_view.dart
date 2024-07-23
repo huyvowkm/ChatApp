@@ -18,7 +18,7 @@ class _SplashViewState extends ConsumerState<SplashView> {
       backgroundColor: Colors.black54, 
       animationDuration: Durations.extralong4,
       splashTransition: SplashTransition.fadeTransition,
-      screenRouteFunction: () async => ref.read(splashViewModel).checkCurrentUser() == null ? '/login' : '/home',
+      screenRouteFunction: () async => ref.watch(splashViewModel).checkAuthUser() == null ? '/login' : '/home',
     );
   }
 }

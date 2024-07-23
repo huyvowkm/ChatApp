@@ -11,13 +11,13 @@ class LoginFormWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     const formSpacer = SizedBox(height: 10);
     return Form(
-      key: ref.read(loginViewModel).formKey,
+      key: ref.watch(loginViewModel).formKey,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           TextFormField(
-            validator: validateEmpty,
+            validator: validateEmail,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             controller: ref.read(loginViewModel).emailController,
             keyboardType: TextInputType.emailAddress,

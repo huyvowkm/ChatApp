@@ -15,20 +15,15 @@ class _RegisterViewState extends ConsumerState<RegisterView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appBar(),
       body: _body(context),
     );
-  }
-
-  AppBar _appBar() {
-    return AppBar();
   }
 
   Widget _body(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.all(15),
       children: [
-        const SizedBox(height: 80),
+        const SizedBox(height: 150),
         const Text('Chat App', textAlign: TextAlign.center, style: TextStyle(fontSize: 30)),
         const SizedBox(height: 30),
         const RegisterFormWidget(),
@@ -36,6 +31,9 @@ class _RegisterViewState extends ConsumerState<RegisterView> {
           onPressed: () async {
             if (ref.read(registerViewModel).passwordController.text != ref.read(registerViewModel).confirmPasswordController.text) {
               showSnackBar(context, 'Password not match');
+              return;
+            }
+            if (!ref.read(registerViewModel).formKey.currentState!.validate()) {
               return;
             }
             final user = await ref.read(registerViewModel).signUp();
