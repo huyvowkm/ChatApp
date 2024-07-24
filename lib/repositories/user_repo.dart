@@ -60,7 +60,12 @@ class UserRepo {
   }
 
   User? checkAuthUser() {
-    return _userRemote.checkAuthUser();
+    final userAuth = _userRemote.checkAuthUser();
+    if (userAuth == null) {
+      return null;
+    }
+    _userRemote.getUser(userAuth.id).then((value) => user = value);
+    return userAuth;
   }
   
 

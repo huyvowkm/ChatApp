@@ -1,3 +1,4 @@
+import 'package:chat_app/views/home/home_view_model.dart';
 import 'package:chat_app/views/home/widgets/chat_widget.dart';
 import 'package:chat_app/widgets/drawer.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,12 @@ class HomeView extends ConsumerStatefulWidget {
 }
 
 class _HomeViewState extends ConsumerState<HomeView> {
+  @override
+  void initState() {
+    super.initState();
+    ref.read(homeViewModel).getChatsByUser();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,11 +66,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
   Widget _chatWidgets() {
     return Column(
-      children: [
-        ChatWidget(),
-        ChatWidget(),
-
-      ],
+      children: ref.watch(homeViewModel).chats.map((chat) => ChatWidget(chat)).toList(),
     );
   }
 
