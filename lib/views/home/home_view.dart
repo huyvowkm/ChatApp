@@ -29,7 +29,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
     return Scaffold(
       appBar: _appBar(),
       drawer: appDrawer(context),
-      body: _body(),
+      body: _body(context),
     );
   }
 
@@ -40,32 +40,39 @@ class _HomeViewState extends ConsumerState<HomeView> {
     );
   }
 
-  Widget _body() {
+  Widget _body(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.all(10),
       children: [
-        _searchBar(),
+        _searchBar(context),
         const SizedBox(height: 10),
         _chatWidgets(),
       ]
     );
   }
 
-  Widget _searchBar() {
-    return TextField(
-      decoration: InputDecoration(
-        contentPadding: const EdgeInsets.all(0),
-        prefixIcon: const Icon(Icons.search),
-        hintText: "Search user or group chat...",
-        fillColor: Colors.white,
-        focusColor: Colors.white,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
-          borderSide: const BorderSide(
-            width: 1,
-            color: Colors.white
-          )
-        )
+  Widget _searchBar(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, '/search');
+      },
+      child: AbsorbPointer(
+        child: TextField(
+          decoration: InputDecoration(
+            contentPadding: const EdgeInsets.all(0),
+            prefixIcon: const Icon(Icons.search),
+            hintText: "Search user or group chat...",
+            fillColor: Colors.white,
+            focusColor: Colors.white,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: const BorderSide(
+                width: 1,
+                color: Colors.white
+              )
+            )
+          ),
+        ),
       ),
     );
   }

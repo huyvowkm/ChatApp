@@ -4,6 +4,7 @@ import 'package:chat_app/views/chat/chat_view.dart';
 import 'package:chat_app/views/home/home_view.dart';
 import 'package:chat_app/views/login/login_view.dart';
 import 'package:chat_app/views/register/register_view.dart';
+import 'package:chat_app/views/search/search_view.dart';
 import 'package:chat_app/views/splash/splash_view.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +21,8 @@ class Routes {
       '/chat': (context) {
         final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
         return ChatView(args['chat']);
-      }
+      },
+      '/search': (_) => const SearchView(),
     };
     return _route;
   }

@@ -71,4 +71,8 @@ class UserRepo {
   Future<UserModel> getUserById(String id) async {
     return await _userRemote.getUserById(id);
   }
+
+  Future<List<UserModel>> filterUsersByName(String name) async {
+    return await _userRemote.filterUsersByName(name);
+  }
 }
