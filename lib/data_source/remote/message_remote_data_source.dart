@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:chat_app/models/message_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -17,11 +15,10 @@ class MessageRemoteDataSource {
       .select('*, user(*)')
       .eq('id', idMessage)
       .single();
-    log(messageJson.toString());
     return MessageModel.fromJson(messageJson);
   }
 
-  SupabaseStreamBuilder getRealtimeMessage(List<String> idChats) {
+  SupabaseStreamBuilder initRealtimeMessagesStream(List<String> idChats) {
     return _supabase  
       .from('message')
       .stream(primaryKey: ['id'])

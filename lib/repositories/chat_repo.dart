@@ -13,17 +13,16 @@ class ChatRepo {
     _chatRemote = chatRemote;
   }
 
-  Future<List<ChatModel>> getChatsByUser(String idUser) async {
-    return await _chatRemote.getChatsByUser(idUser);
-  }
+  // Future<List<ChatModel>> getChatsByUser(String idUser) async {
+  //   return await _chatRemote.getChatsByUser(idUser);
+  // }
 
   Future<ChatModel> getChatById(String idChat, String idUser) async {
     return _chatRemote.getChatById(idChat, idUser);
   }
 
-  SupabaseStreamBuilder getRealtimeChats(String idUser) {
-    return _chatRemote.getRealtimeChats(idUser);
+  SupabaseStreamBuilder initRealtimeChatsStream(String idUser) {
+    return _chatRemote.initRealtimeChatsStream(idUser);
   } 
-
 
 }

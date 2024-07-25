@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:chat_app/models/chat_model.dart';
 import 'package:chat_app/models/message_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,21 +10,21 @@ final chatRemoteProvider = Provider<ChatRemoteDataSource>(
 class ChatRemoteDataSource {
   final _supabase = Supabase.instance.client;
 
-  Future<List<ChatModel>> getChatsByUser(String idUser) async {
-    final idChatsJson = await _supabase.from('user')
-                                    .select('chat ( id )')
-                                    .eq('id', idUser)
-                                    .single();
+  // Future<List<ChatModel>> getChatsByUser(String idUser) async {
+  //   final idChatsJson = await _supabase.from('user')
+  //                                   .select('chat ( id )')
+  //                                   .eq('id', idUser)
+  //                                   .single();
 
-    final chats = <ChatModel>[];
-    for (int i = 0; i < idChatsJson['chat'].length; i++) {
-      final idChat = idChatsJson['chat'][i]['id'].toString();
+  //   final chats = <ChatModel>[];
+  //   for (int i = 0; i < idChatsJson['chat'].length; i++) {
+  //     final idChat = idChatsJson['chat'][i]['id'].toString();
 
-      chats.add(await getChatById(idChat, idUser));
-    }
-    log(chats.map((chat) => chat.toJson()).toString());
-    return chats;
-  }
+  //     chats.add(await getChatById(idChat, idUser));
+  //   }
+  //   log(chats.map((chat) => chat.toJson()).toString());
+  //   return chats;
+  // }
 
   Future<ChatModel> getChatById(String idChat, String idUser) async {
     final chatJson = await _supabase
@@ -65,15 +63,12 @@ class ChatRemoteDataSource {
       avatar: List.from(chatJson['user']).length == 2 ? (chatJson['user'][0]['id'].toString() == idUser ? chatJson['user'][1]['avatar'] : chatJson['user'][0]['avatar']) : chatJson['avatar'],
       lastMessage: MessageModel.fromJson(lastMessageJson)
     );
-    
   }
 
-  SupabaseStreamBuilder getRealtimeChats(String idUser)  {
+  SupabaseStreamBuilder initRealtimeChatsStream(String idUser)  {
     return _supabase
       .from('chat_user')
       .stream(primaryKey: ['id_chat, id_user'])
       .eq('id_user', idUser);
   }
-
-
 }

@@ -13,8 +13,8 @@ class MessageRepo {
     _messageRemote = messageRemote;
   }
 
-  SupabaseStreamBuilder getRealtimeMessage(List<String> idChats) {
-    return _messageRemote.getRealtimeMessage(idChats);
+  SupabaseStreamBuilder initRealtimeMessagesStream(List<String> idChats) {
+    return _messageRemote.initRealtimeMessagesStream(idChats);
   }
 
   Future<MessageModel> getMessageById(String idMessage) async {

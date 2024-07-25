@@ -8,7 +8,6 @@ import 'package:chat_app/repositories/message_repo.dart';
 import 'package:chat_app/repositories/user_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 final homeViewModel = ChangeNotifierProvider.autoDispose(
   (ref) => HomeViewModel(
@@ -19,34 +18,34 @@ final homeViewModel = ChangeNotifierProvider.autoDispose(
 );
 
 class HomeViewModel extends ChangeNotifier {
-  late final UserRepo _userRepo;
-  late final ChatRepo _chatRepo;
-  late final MessageRepo _messageRepo;
-  StreamSubscription? realtimeChats;
-  StreamSubscription? realtimeMessage;
-
   HomeViewModel(UserRepo userRepo, ChatRepo chatRepo, MessageRepo messageRepo) {
     _userRepo = userRepo;
     _chatRepo = chatRepo;
     _messageRepo = messageRepo;
   }
 
+  late final UserRepo _userRepo;
+  late final ChatRepo _chatRepo;
+  late final MessageRepo _messageRepo;
+  StreamSubscription? realtimeChats;
+  StreamSubscription? realtimeMessage;
   List<ChatModel> chats = List.empty(growable: true);
   Stream<List<ChatModel>> a = const Stream.empty();
+
   Future<UserModel?> checkCurrentUser() async {
     return await _userRepo.checkCurrentUser();
   }
 
-  Future<void> getChatsByUser() async {
-    chats = await _chatRepo.getChatsByUser(_userRepo.user!.id);
-    notifyListeners();
-  }
+  // Future<void> getChatsByUser() async {
+  //   chats = await _chatRepo.getChatsByUser(_userRepo.user!.id);
+  //   notifyListeners();
+  // }
 
-  Future<void> assignChatRepo() async {
+  Future<void> initRealtimeChatsStream() async {
     await realtimeChats?.cancel();
     
     realtimeChats = _chatRepo
-      .getRealtimeChats(_userRepo.user!.id)
+      .initRealtimeChatsStream(_userRepo.user!.id)
       .listen((data) async {
         log(data.toString());
         for (var row in data) {
@@ -56,15 +55,13 @@ class HomeViewModel extends ChangeNotifier {
         }
         notifyListeners();
     });
-    log('Assign chat repo');
   }
 
-  void assignMessageRepo() {
-    if (realtimeMessage != null) {
-      realtimeMessage!.cancel();
-    }
+  void initRealtimeMessagesStream() {
+    realtimeMessage?.cancel();
+    
     realtimeMessage = _messageRepo
-      .getRealtimeMessage(chats.map((chat) => chat.id).toList())
+      .initRealtimeMessagesStream(chats.map((chat) => chat.id).toList())
       .listen((data) async {
         if (data.isEmpty) return; 
         log(data.toString());
@@ -74,6 +71,13 @@ class HomeViewModel extends ChangeNotifier {
         }
         notifyListeners();
     });
-    log('Assign message repo');
+  }
+
+  /// Refresh home view every 1 minute
+  /// based on available data, not fetch new data
+  void autoUpdate() {
+    Timer.periodic(const Duration(minutes: 1), (timer) {
+      notifyListeners();
+    });
   }
 }
