@@ -15,6 +15,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
   @override
   void initState() {
     super.initState();
+    ref.read(homeViewModel).getChatsByUser();
     ref.read(homeViewModel).initRealtimeChatsStream();
     ref.read(homeViewModel).autoUpdate();
   }
@@ -22,7 +23,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
   @override
   Widget build(BuildContext context) {
     ref.listen(homeViewModel.select((p) => p.chats), (previous, next) {
-      ref.read(homeViewModel).initRealtimeMessagesStream();
+      ref.read(homeViewModel).initLastMessagesStream();
     });
 
     return Scaffold(

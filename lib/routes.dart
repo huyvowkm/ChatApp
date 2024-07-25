@@ -1,5 +1,6 @@
 
 import 'package:chat_app/views/account/account_view.dart';
+import 'package:chat_app/views/chat/chat_view.dart';
 import 'package:chat_app/views/home/home_view.dart';
 import 'package:chat_app/views/login/login_view.dart';
 import 'package:chat_app/views/register/register_view.dart';
@@ -16,6 +17,10 @@ class Routes {
       '/login': (_) => const LoginView(),
       '/register': (_) => const RegisterView(),
       '/account': (_) => const AccountView(),
+      '/chat': (context) {
+        final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+        return ChatView(args['chat']);
+      }
     };
     return _route;
   }

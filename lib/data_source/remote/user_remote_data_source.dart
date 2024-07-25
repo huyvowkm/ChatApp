@@ -46,7 +46,7 @@ class UserRemoteDataSource {
     return _supabase.auth.currentUser;
   }
 
-  Future<UserModel> getUser(String id) async {
+  Future<UserModel> getUserById(String id) async {
     return await _supabase.from('user')
     .select()
     .eq('id', id)

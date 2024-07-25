@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:chat_app/models/chat_model.dart';
-import 'package:chat_app/models/user_model.dart';
 import 'package:chat_app/repositories/chat_repo.dart';
 import 'package:chat_app/repositories/message_repo.dart';
 import 'package:chat_app/repositories/user_repo.dart';
@@ -30,16 +29,16 @@ class HomeViewModel extends ChangeNotifier {
   StreamSubscription? realtimeChats;
   StreamSubscription? realtimeMessage;
   List<ChatModel> chats = List.empty(growable: true);
-  Stream<List<ChatModel>> a = const Stream.empty();
 
-  Future<UserModel?> checkCurrentUser() async {
-    return await _userRepo.checkCurrentUser();
-  }
-
-  // Future<void> getChatsByUser() async {
-  //   chats = await _chatRepo.getChatsByUser(_userRepo.user!.id);
-  //   notifyListeners();
+  // Future<void> getCurrentUser() async {
+  //   user = await _userRepo.checkCurrentUser();
   // }
+
+  Future<void> getChatsByUser() async {
+    chats = await _chatRepo.getChatsByUser(_userRepo.user!.id);
+    log('Chats: ${chats.map((chat) => chat.toJson())}');
+    notifyListeners();
+  }
 
   Future<void> initRealtimeChatsStream() async {
     await realtimeChats?.cancel();
@@ -47,26 +46,27 @@ class HomeViewModel extends ChangeNotifier {
     realtimeChats = _chatRepo
       .initRealtimeChatsStream(_userRepo.user!.id)
       .listen((data) async {
-        log(data.toString());
         for (var row in data) {
-          final newChat = await _chatRepo.getChatById(row['id_chat'], row['id_user']);
-          log(newChat.toJson().toString());
-          chats = [...chats, newChat];
+          if (chats.indexWhere((chat) => chat.id == row['id_chat']) == -1) {
+            final newChat = await _chatRepo.getChatById(row['id_chat'], _userRepo.user!.id);
+            log('New chat: ${newChat.toJson().toString()}');
+            chats.add(newChat);
+          }
         }
         notifyListeners();
     });
   }
 
-  void initRealtimeMessagesStream() {
-    realtimeMessage?.cancel();
+  Future<void> initLastMessagesStream() async {
+    await realtimeMessage?.cancel();
     
     realtimeMessage = _messageRepo
-      .initRealtimeMessagesStream(chats.map((chat) => chat.id).toList())
+      .initLastMessagesStream(chats.map((chat) => chat.id).toList())
       .listen((data) async {
-        if (data.isEmpty) return; 
-        log(data.toString());
+        if (chats.isEmpty) return; 
         for (var row in data) {
           final newMessage = await _messageRepo.getMessageById(row['id']);
+          log('Latest message: ${newMessage.toJson().toString()}');
           chats.firstWhere((chat) => chat.id == newMessage.to).lastMessage = newMessage;
         }
         notifyListeners();
@@ -79,5 +79,12 @@ class HomeViewModel extends ChangeNotifier {
     Timer.periodic(const Duration(minutes: 1), (timer) {
       notifyListeners();
     });
+  }
+
+  @override
+  void dispose() {
+    realtimeChats?.cancel();
+    realtimeMessage?.cancel();
+    super.dispose();
   }
 }
