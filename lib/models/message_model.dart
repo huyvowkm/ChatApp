@@ -20,7 +20,7 @@ class MessageModel {
     content: json['content'],
     createdAt: json['created_at'],
     from: UserModel.fromJson(json['user']),
-    to: json['chat']['id']
+    to: json['to']
   );
 
   Map<String, dynamic> toJson() => {

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:chat_app/models/message_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -15,6 +17,7 @@ class MessageRemoteDataSource {
       .select('*, user(*)')
       .eq('id', idMessage)
       .single();
+    log(messageJson.toString());
     return MessageModel.fromJson(messageJson);
   }
 
@@ -22,6 +25,8 @@ class MessageRemoteDataSource {
     return _supabase  
       .from('message')
       .stream(primaryKey: ['id'])
-      .inFilter('to', idChats);
+      .inFilter('to', idChats)
+      .order('created_at')
+      .limit(1);
   } 
 }

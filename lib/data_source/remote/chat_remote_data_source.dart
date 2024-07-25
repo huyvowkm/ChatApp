@@ -50,14 +50,14 @@ class ChatRemoteDataSource {
         id,
         content,
         created_at,
-        user (*),
-        chat ( id )
+        to,
+        user (*)
       ''')
       .eq('to', idChat)  
       .order('created_at')
       .limit(1)
       .single(); 
-
+    
     return ChatModel(
       id: idChat,
       name: List.from(chatJson['user']).length == 2 ? (chatJson['user'][0]['id'].toString() == idUser ? chatJson['user'][1]['name'] : chatJson['user'][0]['name']) : chatJson['name'],
@@ -65,6 +65,7 @@ class ChatRemoteDataSource {
       avatar: List.from(chatJson['user']).length == 2 ? (chatJson['user'][0]['id'].toString() == idUser ? chatJson['user'][1]['avatar'] : chatJson['user'][0]['avatar']) : chatJson['avatar'],
       lastMessage: MessageModel.fromJson(lastMessageJson)
     );
+    
   }
 
   SupabaseStreamBuilder getRealtimeChats(String idUser)  {

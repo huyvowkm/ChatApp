@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:chat_app/data_source/remote/chat_remote_data_source.dart';
 import 'package:chat_app/views/home/home_view_model.dart';
 import 'package:chat_app/views/home/widgets/chat_widget.dart';
@@ -17,13 +19,14 @@ class _HomeViewState extends ConsumerState<HomeView> {
   void initState() {
     super.initState();
     ref.read(homeViewModel).assignChatRepo();
-    ref.read(homeViewModel).assignMessageRepo();
+    // ref.read(homeViewModel).assignMessageRepo();
 
   }
 
   @override
   Widget build(BuildContext context) {
     ref.listen(homeViewModel.select((p) => p.chats), (previous, next) {
+      log('Update chat');
       ref.read(homeViewModel).assignMessageRepo();
     });
 

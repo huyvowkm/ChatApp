@@ -22,28 +22,13 @@ class HomeViewModel extends ChangeNotifier {
   late final UserRepo _userRepo;
   late final ChatRepo _chatRepo;
   late final MessageRepo _messageRepo;
-  late final StreamSubscription realtimeChats;
-  late final StreamSubscription realtimeMessage;
+  StreamSubscription? realtimeChats;
+  StreamSubscription? realtimeMessage;
+
   HomeViewModel(UserRepo userRepo, ChatRepo chatRepo, MessageRepo messageRepo) {
     _userRepo = userRepo;
     _chatRepo = chatRepo;
     _messageRepo = messageRepo;
-    
-
-    // realtimeMessage = _messageRepo
-    //   .getRealtimeMessage(chats.map((chat) => chat.id).toList())
-    //   .listen((data) async {
-    //     if (data.isEmpty) return; 
-    //     log(data.toString());
-    //     log(chats.map((chat)=>chat.id).toString());
-    //     for (var row in data) {
-    //       final newMessage = await _messageRepo.getMessageById(row['id']);
-    //       chats.firstWhere((chat) => chat.id == newMessage.to).lastMessage = newMessage;
-    //       notifyListeners();
-    //     }
-    // });
-
-    
   }
 
   List<ChatModel> chats = List.empty(growable: true);
@@ -57,33 +42,38 @@ class HomeViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void assignChatRepo() {
+  Future<void> assignChatRepo() async {
+    await realtimeChats?.cancel();
+    
     realtimeChats = _chatRepo
       .getRealtimeChats(_userRepo.user!.id)
       .listen((data) async {
+        log(data.toString());
         for (var row in data) {
           final newChat = await _chatRepo.getChatById(row['id_chat'], row['id_user']);
-          chats.add(newChat);
+          log(newChat.toJson().toString());
+          chats = [...chats, newChat];
         }
         notifyListeners();
     });
+    log('Assign chat repo');
   }
 
-  // Future<void> getRealtimeChats() async {
-  //   return _chatRepo.getRealtimeChats(_userRepo.user!.id);
-  // }
   void assignMessageRepo() {
+    if (realtimeMessage != null) {
+      realtimeMessage!.cancel();
+    }
     realtimeMessage = _messageRepo
       .getRealtimeMessage(chats.map((chat) => chat.id).toList())
       .listen((data) async {
         if (data.isEmpty) return; 
         log(data.toString());
-        log(chats.map((chat)=>chat.id).toString());
         for (var row in data) {
           final newMessage = await _messageRepo.getMessageById(row['id']);
           chats.firstWhere((chat) => chat.id == newMessage.to).lastMessage = newMessage;
-          notifyListeners();
         }
+        notifyListeners();
     });
+    log('Assign message repo');
   }
 }
