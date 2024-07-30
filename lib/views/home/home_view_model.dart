@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:chat_app/models/chat_model.dart';
+import 'package:chat_app/models/user_model.dart';
 import 'package:chat_app/repositories/chat_repo.dart';
 import 'package:chat_app/repositories/message_repo.dart';
 import 'package:chat_app/repositories/user_repo.dart';

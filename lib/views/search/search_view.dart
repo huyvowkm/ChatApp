@@ -1,5 +1,5 @@
 import 'package:chat_app/views/search/search_view_model.dart';
-import 'package:chat_app/views/search/widgets/user_widget.dart';
+import 'package:chat_app/views/search/widgets/search_result_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -11,6 +11,12 @@ class SearchView extends ConsumerStatefulWidget {
 }
 
 class _SearchViewState extends ConsumerState<SearchView> {
+
+  @override
+  void initState() {
+    super.initState();
+    ref.read(searchViewModel).filterChatsByName('');
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +27,7 @@ class _SearchViewState extends ConsumerState<SearchView> {
 
   AppBar _appBar() {
     return AppBar(
-      
+      title: _searchBar()
     );
   }
 
@@ -30,7 +36,6 @@ class _SearchViewState extends ConsumerState<SearchView> {
       padding: const EdgeInsets.all(10),
       child: Column(
         children: [
-          _searchBar(),
           _userResult(),
         ],
       )
@@ -40,22 +45,16 @@ class _SearchViewState extends ConsumerState<SearchView> {
   Widget _searchBar() {
     return TextField(
       autofocus: true,
-      decoration: InputDecoration(
-        contentPadding: const EdgeInsets.all(0),
-        prefixIcon: const Icon(Icons.search),
-        hintText: "Search user or group chat...",
-        fillColor: Colors.white,
-        focusColor: Colors.white,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
-          borderSide: const BorderSide(
-            width: 1,
-            color: Colors.white
-          )
-        )
+      style: const TextStyle(
+        fontSize: 20,
+      ),
+      cursorColor: Colors.white,
+      decoration: const InputDecoration(
+        hintText: "Search...",
+        border: InputBorder.none
       ),
       onChanged: (value) {
-        ref.read(searchViewModel).filterUsersByName(value);
+        ref.read(searchViewModel).filterChatsByName(value);
       },
     );
   }
@@ -63,8 +62,8 @@ class _SearchViewState extends ConsumerState<SearchView> {
   Widget _userResult() {
     return Expanded(
       child: ListView(
-        children: ref.watch(searchViewModel).users
-          .map((user) => UserWidget(user)).toList(),
+        children: ref.watch(searchViewModel).result
+          .map((chat) => SearchResultWidget(chat)).toList(),
       ),
     );
   }

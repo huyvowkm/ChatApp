@@ -14,17 +14,17 @@ class ChatWidget extends ConsumerWidget {
         Navigator.pushNamed(context, '/chat', arguments: { 'chat' : chat });
       },
       leading: chat.avatar == '' ? const FlutterLogo(size: 30) : Image.network(chat.avatar!),
-      title: Text(chat.name),
+      title: Text(chat.name, overflow: TextOverflow.ellipsis),
       subtitle: Row(
         children: [
           Flexible(
             child: Text(
-              chat.lastMessage.content,
+              chat.lastMessage!.content,
               overflow: TextOverflow.ellipsis,
             ),
           ),
           const Text(' · '),
-          Text(timeago.format(DateTime.parse(chat.lastMessage.createdAt), locale: 'en_short')),
+          Text(timeago.format(DateTime.parse(chat.lastMessage!.createdAt), locale: 'en_short')),
         ],
       ),
       titleTextStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),

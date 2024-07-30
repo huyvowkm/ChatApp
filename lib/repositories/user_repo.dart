@@ -67,12 +67,12 @@ class UserRepo {
     _userRemote.getUserById(userAuth.id).then((value) => user = value);
     return userAuth;
   }
-  
+
   Future<UserModel> getUserById(String id) async {
     return await _userRemote.getUserById(id);
   }
 
-  Future<List<UserModel>> filterUsersByName(String name) async {
-    return await _userRemote.filterUsersByName(name);
+  Future<List<UserModel>> filterUsersByName(String name, String currentUserId) async {
+    return await _userRemote.filterUsersByName(name, currentUserId);
   }
 }

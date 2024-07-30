@@ -18,9 +18,11 @@ class _ChatViewState extends ConsumerState<ChatView> {
   void initState() {
     super.initState();
     ref.read(chatViewModel).getCurrentUser();
-    ref.read(chatViewModel).getChatInfo(widget.chat);
-    ref.read(chatViewModel).getMessagesByChat(widget.chat.id);
-    ref.read(chatViewModel).initRealtimeMessagesStream(widget.chat.id);
+    if (widget.chat.id.isNotEmpty) {
+      ref.read(chatViewModel).getChatInfo(widget.chat);
+      ref.read(chatViewModel).getMessagesByChat(widget.chat.id);
+      ref.read(chatViewModel).initRealtimeMessagesStream(widget.chat.id);
+    }
   }
 
   @override

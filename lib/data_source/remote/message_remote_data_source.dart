@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:chat_app/models/message_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -59,6 +57,6 @@ class MessageRemoteDataSource {
       'content': content,
       'from': from,
       'to': to
-    }).then((value) => log('Insert message'));
+    });
   } 
 }

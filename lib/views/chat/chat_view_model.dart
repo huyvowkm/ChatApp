@@ -73,6 +73,10 @@ class ChatViewModel extends ChangeNotifier {
     sendMessageController.clear();
   }
 
+  Future<void> sendFirstMessage() async {
+     
+  }
+
   @override
   void dispose() {
     realtimeMessages?.cancel();
