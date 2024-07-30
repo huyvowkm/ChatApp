@@ -28,6 +28,7 @@ class ChatViewModel extends ChangeNotifier {
   UserModel? user;
   ChatModel? _chat;
   final sendMessageController = TextEditingController();
+  bool canSendMessage = false;
 
   void getCurrentUser() {
     user = _userRepo.user;
@@ -45,7 +46,6 @@ class ChatViewModel extends ChangeNotifier {
 
   void initRealtimeMessagesStream(String idChat)  {
     realtimeMessages?.cancel();
-
     realtimeMessages = _messageRepo
       .initRealtimeMessagesStream(idChat)
       .listen((data) async {
@@ -61,20 +61,38 @@ class ChatViewModel extends ChangeNotifier {
     });
   }
 
+  void checkValidMessage() {
+    canSendMessage = sendMessageController.text.isNotEmpty;
+    notifyListeners();
+  }
+
   Future<void> sendMessage() async {
     final messageContent = sendMessageController.text;
-
     await _messageRepo.sendMessage(
       content: messageContent,
       from: _userRepo.user!.id,
       to: _chat!.id
     );
-
     sendMessageController.clear();
   }
 
+  /// Used when a user wants to send message to a new user
   Future<void> sendFirstMessage() async {
-     
+    // create new chat
+    final newChat = await _chatRepo.addNewChat();
+    _chat!.id = newChat.id;
+    _chat!.createdAt = newChat.createdAt;
+
+    // create new message
+    await sendMessage();
+
+    // add new user to chat
+    for (var user in _chat!.users) {
+      _chatRepo.addNewChatUser(_chat!.id, user.id);
+    }
+    getMessagesByChat(_chat!.id);
+    initRealtimeMessagesStream(_chat!.id);
+    notifyListeners();
   }
 
   @override

@@ -1,15 +1,13 @@
 import 'dart:async';
 import 'dart:developer';
-
 import 'package:chat_app/models/chat_model.dart';
-import 'package:chat_app/models/user_model.dart';
 import 'package:chat_app/repositories/chat_repo.dart';
 import 'package:chat_app/repositories/message_repo.dart';
 import 'package:chat_app/repositories/user_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final homeViewModel = ChangeNotifierProvider.autoDispose(
+final homeViewModel = ChangeNotifierProvider(
   (ref) => HomeViewModel(
     ref.read(userRepoProvider), 
     ref.read(chatRepoProvider),
@@ -51,7 +49,7 @@ class HomeViewModel extends ChangeNotifier {
           if (chats.indexWhere((chat) => chat.id == row['id_chat']) == -1) {
             final newChat = await _chatRepo.getChatById(row['id_chat'], _userRepo.user!.id);
             log('New chat: ${newChat.toJson().toString()}');
-            chats.add(newChat);
+            chats = [...chats, newChat];
           }
         }
         notifyListeners();

@@ -18,8 +18,8 @@ class _ChatViewState extends ConsumerState<ChatView> {
   void initState() {
     super.initState();
     ref.read(chatViewModel).getCurrentUser();
+    ref.read(chatViewModel).getChatInfo(widget.chat);
     if (widget.chat.id.isNotEmpty) {
-      ref.read(chatViewModel).getChatInfo(widget.chat);
       ref.read(chatViewModel).getMessagesByChat(widget.chat.id);
       ref.read(chatViewModel).initRealtimeMessagesStream(widget.chat.id);
     }
@@ -83,10 +83,15 @@ class _ChatViewState extends ConsumerState<ChatView> {
                 ),
                 hintText: 'Enter something...',
               ),
+              onChanged: (_) => ref.read(chatViewModel).checkValidMessage(),
             ),
           ),
           IconButton(
-            onPressed: () async => ref.read(chatViewModel).sendMessage(),
+            onPressed: ref.read(chatViewModel).canSendMessage
+            ? () async => widget.chat.id.isNotEmpty
+              ? ref.read(chatViewModel).sendMessage()
+              : ref.read(chatViewModel).sendFirstMessage()
+            : null,
             icon: const Icon(Icons.send)
           )
         ],

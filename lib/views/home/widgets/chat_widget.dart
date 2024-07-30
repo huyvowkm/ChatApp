@@ -13,7 +13,7 @@ class ChatWidget extends ConsumerWidget {
       onTap: () {
         Navigator.pushNamed(context, '/chat', arguments: { 'chat' : chat });
       },
-      leading: chat.avatar == '' ? const FlutterLogo(size: 30) : Image.network(chat.avatar!),
+      leading: chat.avatar == '' ? const FlutterLogo(size: 30) : Image.network(chat.avatar),
       title: Text(chat.name, overflow: TextOverflow.ellipsis),
       subtitle: Row(
         children: [

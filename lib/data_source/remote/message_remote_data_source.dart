@@ -52,11 +52,16 @@ class MessageRemoteDataSource {
 
   /// Send message with [content] from user with id [from] to chat with id [to] 
   Future<void> sendMessage({required String content, required String from, required String to}) async {
+    // MessageModel messageModel;
     await _supabase.from('message')
     .insert({
       'content': content,
       'from': from,
       'to': to
     });
+    // .select('*, user(*)')
+    // .single()
+    // .then((value) => messageModel = MessageModel.fromJson(value));
+    // return messageModel;
   } 
 }

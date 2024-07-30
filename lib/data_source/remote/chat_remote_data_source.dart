@@ -48,7 +48,9 @@ class ChatRemoteDataSource {
     return _supabase
       .from('chat_user')
       .stream(primaryKey: ['id_chat, id_user'])
-      .eq('id_user', idUser).limit(1);
+      .eq('id_user', idUser)
+      .order('created_at')
+      .limit(1);
   }
 
   Future<ChatModel> addNewChat() async {
@@ -67,6 +69,16 @@ class ChatRemoteDataSource {
     return chat;
   }
 
+  /// Add new user with [idUser] into chat with [idChat]
+  Future<void> addNewChatUser(String idChat, String idUser) async {
+    await _supabase
+      .from('chat_user')
+      .insert({
+        'id_chat': idChat,
+        'id_user': idUser
+    });
+  }
+
   Future<List<ChatModel>> filterChatsByName(String name, String currentUserId) async {
     final idChatsJson = await _supabase
       .from('user')
@@ -81,4 +93,6 @@ class ChatRemoteDataSource {
       .ilike('name', '%$name%');
     return chatsJson.map((chatJson) => ChatModel.fromJson(chatJson)).toList();
   }
+
+
 }
