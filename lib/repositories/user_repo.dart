@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:chat_app/models/user_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:chat_app/data_source/remote/user_remote_data_source.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -9,34 +10,58 @@ final userRepoProvider = Provider<UserRepo>(
 );
 
 class UserRepo {
-  UserRepo._();
-  static final UserRepo _instance = UserRepo._();
-  static UserRemoteDataSource? _userRemote;
-  User? user;
-  factory UserRepo(UserRemoteDataSource userRemote) {
+  late final UserRemoteDataSource _userRemote;
+  UserModel? user;
+  UserRepo(UserRemoteDataSource userRemote) {
     _userRemote = userRemote;
-    return _instance;
   }
 
-  Future<void> signInWithPassword(String email, String password) async {
-    final authResponse = await _userRemote!.signInWithPassword(email, password);
-    user = authResponse.user;
-    log(authResponse.session.toString());
+  Future<UserModel?> signInWithPassword(String email, String password) async {
+    try {
+      final authResponse = await _userRemote.signInWithPassword(email, password);
+      if (authResponse.user == null) {
+        return null;
+      }
+      user = await _userRemote.getUser(authResponse.user!.id);
+      log(authResponse.session.toString());
+      return user;
+    } on AuthException catch(err) {
+      log(err.toString());
+      return null;
+    }
   }
 
-  Future<void> signUp(String email, String password) async {
-    final authResponse = await _userRemote!.signUp(email, password);
-    user = authResponse.user;
-    log(authResponse.session.toString());
+  Future<UserModel?> signUp(String name, String email, String password) async {
+    try {
+      final authResponse = await _userRemote.signUp(name, email, password);
+      if (authResponse.user == null) {
+        return null;
+      }
+      user = await _userRemote.getUser(authResponse.user!.id);
+      log(authResponse.session.toString());
+      return user;
+    } on AuthException catch (err) {
+      log(err.toString());
+      return null;
+    } 
   }
 
   Future<void> signOut() async {
-    await _userRemote!.signOut();
+    await _userRemote.signOut();
     user = null;
   }
 
-  User? checkCurrentUser() {
-    user = _userRemote!.checkCurrentUser();
-    return user;
+  Future<UserModel?> checkCurrentUser() async {
+    final userAuth = _userRemote.checkAuthUser();
+    if (userAuth == null) {
+      return null;
+    }
+    return await _userRemote.getUser(userAuth.id);
   }
+
+  User? checkAuthUser() {
+    return _userRemote.checkAuthUser();
+  }
+  
+
 }

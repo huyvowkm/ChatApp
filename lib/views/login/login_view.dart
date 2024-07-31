@@ -1,6 +1,6 @@
-import 'package:chat_app/utils/validators.dart';
+import 'package:chat_app/utils/snackbar.dart';
 import 'package:chat_app/views/login/login_view_model.dart';
-import 'package:chat_app/widgets/password_text_field_widget.dart';
+import 'package:chat_app/views/login/widgets/login_form_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -13,65 +13,52 @@ class LoginView extends ConsumerStatefulWidget {
 
 class _LoginState extends ConsumerState<LoginView> {
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appBar(),
-      body: _body(ref)
+      body: _body(context)
     );
   }
 
-  AppBar _appBar() {
-    return AppBar();
-  }
-
-  Widget _body(WidgetRef ref) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      child: Form(
-        key: ref.read(loginViewModel).formKey,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormField(
-              validator: validateEmpty,
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              controller: ref.read(loginViewModel).emailController,
-              decoration: const InputDecoration(
-                // labelText: 'Email',
-                hintText: 'Enter your email'
-              ),
-            ),
-            PasswordTextFieldWidget(
-              validator: validateEmpty,
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              controller: ref.read(loginViewModel).passwordController,
-              label: const Text('Password'),
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: _signIn,
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: Colors.lightBlue[400],
-                    ),
-                    child: const Text('Sign in')
-                  )
-                )
-              ],
-            )
-          ]
+  Widget _body(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(15),
+      children: [
+        const SizedBox(height: 180),
+        const Text('Chat App', textAlign: TextAlign.center, style: TextStyle(fontSize: 30)),
+        const SizedBox(height: 30),
+        const LoginFormWidget(),
+        ElevatedButton(
+          onPressed: () async {
+            if (!ref.read(loginViewModel).formKey.currentState!.validate()) {
+              return;
+            }
+            final user = await ref.read(loginViewModel).signInWithPassword();
+            if (user != null) {
+              Navigator.pushReplacementNamed(context, '/home');
+            } else {
+              showSnackBar(context, 'Invalid account');
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white,
+            backgroundColor: Colors.lightBlue[600],
+          ),
+          child: const Text('Sign in')
         ),
-      )
+        const SizedBox(height: 30),
+        const Divider(),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, '/register');
+          },
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.grey,
+            backgroundColor: Colors.grey[900],
+          ),
+          child: const Text('Create new account')
+        ),
+      ] 
     );
   }
-
-  void _signIn() {
-    ref.read(loginViewModel).signInWithPassword();
-  }
-  
 }

@@ -1,8 +1,9 @@
+import 'package:chat_app/models/user_model.dart';
 import 'package:chat_app/repositories/user_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final loginViewModel = ChangeNotifierProvider<LoginViewModel>(
+final loginViewModel = ChangeNotifierProvider.autoDispose(
   (ref) => LoginViewModel(ref.read(userRepoProvider))
 );
 
@@ -17,10 +18,13 @@ class LoginViewModel extends ChangeNotifier {
   final passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
-  Future<void> signInWithPassword() async {
+  Future<UserModel?> signInWithPassword() async {
+    // if (!formKey.currentState!.validate()) {
+    //   return null;
+    // }
     final email = emailController.text;
     final password = passwordController.text;
-    await _userRepo.signInWithPassword(email, password);
+    return await _userRepo.signInWithPassword(email, password);
   }
-  
+
 }

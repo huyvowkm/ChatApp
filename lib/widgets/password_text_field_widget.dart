@@ -56,7 +56,7 @@ class _PasswordTextFieldWidgetState extends State<PasswordTextFieldWidget> {
           width: 1,
           color: Colors.white,
         ),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(15),
       )
     );
 
