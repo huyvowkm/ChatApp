@@ -28,6 +28,7 @@ class ChatViewModel extends ChangeNotifier {
   UserModel? user;
   ChatModel? _chat;
   final sendMessageController = TextEditingController();
+  final messageScrollController = ScrollController();
   bool canSendMessage = false;
 
   void getCurrentUser() {
@@ -42,6 +43,7 @@ class ChatViewModel extends ChangeNotifier {
     messages = await _messageRepo.getMessagesByChat(idChat);
     log('Messages: ${messages.map((message) => message.toJson())}');
     notifyListeners();
+    // scrollDown();
   }
 
   void initRealtimeMessagesStream(String idChat)  {
@@ -54,7 +56,7 @@ class ChatViewModel extends ChangeNotifier {
           if (messages.indexWhere((message) => message.id == row['id']) == -1) {
             final newMessage = await _messageRepo.getMessageById(row['id']);
             log('New message: ${newMessage.toJson().toString()}');
-            messages = [...messages, newMessage];
+            messages = [newMessage, ...messages];
           }
         }
         notifyListeners();
@@ -74,6 +76,7 @@ class ChatViewModel extends ChangeNotifier {
       to: _chat!.id
     );
     sendMessageController.clear();
+    scrollDown();
   }
 
   /// Used when a user wants to send message to a new user
@@ -92,7 +95,12 @@ class ChatViewModel extends ChangeNotifier {
     }
     getMessagesByChat(_chat!.id);
     initRealtimeMessagesStream(_chat!.id);
+    scrollDown();
     notifyListeners();
+  }
+
+  void scrollDown() {
+    messageScrollController.jumpTo(0);
   }
 
   @override

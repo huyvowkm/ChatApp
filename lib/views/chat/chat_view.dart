@@ -56,6 +56,8 @@ class _ChatViewState extends ConsumerState<ChatView> {
   Widget _messagesArea() {
     return Expanded(
       child: ListView(
+        reverse: true,
+        controller: ref.read(chatViewModel).messageScrollController,
         children: ref.watch(chatViewModel).messages
           .map((message) => MessageWidget(
             message, 
@@ -73,6 +75,8 @@ class _ChatViewState extends ConsumerState<ChatView> {
           Expanded(
             child: TextField(
               controller: ref.read(chatViewModel).sendMessageController,
+              maxLines: 3,
+              minLines: 1,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(25),
