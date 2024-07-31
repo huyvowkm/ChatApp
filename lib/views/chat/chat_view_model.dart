@@ -2,27 +2,36 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:chat_app/models/chat_model.dart';
 import 'package:chat_app/models/message_model.dart';
+import 'package:chat_app/models/notification_model.dart';
 import 'package:chat_app/models/user_model.dart';
 import 'package:chat_app/repositories/chat_repo.dart';
 import 'package:chat_app/repositories/message_repo.dart';
+import 'package:chat_app/repositories/notification_repo.dart';
 import 'package:chat_app/repositories/user_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final chatViewModel = ChangeNotifierProvider.autoDispose(
-  (ref) => ChatViewModel(ref.read(chatRepoProvider), ref.read(userRepoProvider), ref.read(messageRepoProvider))
+  (ref) => ChatViewModel(
+    ref.read(chatRepoProvider), 
+    ref.read(userRepoProvider), 
+    ref.read(messageRepoProvider),
+    ref.read(notificationRepoProvider)
+  )
 );
 
 class ChatViewModel extends ChangeNotifier {
-  ChatViewModel(ChatRepo chatRepo, UserRepo userRepo, MessageRepo messageRepo) {
+  ChatViewModel(ChatRepo chatRepo, UserRepo userRepo, MessageRepo messageRepo, NotificationRepo notificationRepo) {
     _chatRepo = chatRepo;
     _userRepo = userRepo;
     _messageRepo = messageRepo;
+    _notificationRepo = notificationRepo;
   }
 
   late final ChatRepo _chatRepo;
   late final UserRepo _userRepo;
   late final MessageRepo _messageRepo;
+  late final NotificationRepo _notificationRepo;
   StreamSubscription? realtimeMessages;
   List<MessageModel> messages = List.empty(growable:  true);
   UserModel? user;
@@ -64,12 +73,12 @@ class ChatViewModel extends ChangeNotifier {
   }
 
   void checkValidMessage() {
-    canSendMessage = sendMessageController.text.isNotEmpty;
+    canSendMessage = sendMessageController.text.trim().isNotEmpty;
     notifyListeners();
   }
 
   Future<void> sendMessage() async {
-    final messageContent = sendMessageController.text;
+    final messageContent = sendMessageController.text.trim();
     await _messageRepo.sendMessage(
       content: messageContent,
       from: _userRepo.user!.id,
@@ -77,6 +86,11 @@ class ChatViewModel extends ChangeNotifier {
     );
     sendMessageController.clear();
     scrollDown();
+    _notificationRepo.createNotification(NotificationModel(
+      title: _userRepo.user!.name,
+      content: messageContent,
+      targetChatId: _chat!.id
+    ));
   }
 
   /// Used when a user wants to send message to a new user

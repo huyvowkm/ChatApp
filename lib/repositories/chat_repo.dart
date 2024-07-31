@@ -21,6 +21,7 @@ class ChatRepo {
         chat.name = _genChatName(chat.users, idUser);
       }
     }
+    chats.sort((chata, chatb) => DateTime.parse(chatb.lastMessage!.createdAt).compareTo(DateTime.parse(chata.lastMessage!.createdAt)));
     return chats;
   }
 

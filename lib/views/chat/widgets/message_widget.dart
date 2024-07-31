@@ -1,6 +1,5 @@
 import 'package:chat_app/models/message_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 class MessageWidget extends StatelessWidget {
   MessageModel message;
@@ -43,10 +42,10 @@ class MessageWidget extends StatelessWidget {
   Widget _avatar() {
     return  Container(
       margin: const EdgeInsets.only(right: 5),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         shape: BoxShape.circle,
       ),
-      child: FlutterLogo(size: 30)
+      child: const FlutterLogo(size: 30)
     );
   }
 }

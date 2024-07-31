@@ -66,7 +66,10 @@ class HomeViewModel extends ChangeNotifier {
         for (var row in data) {
           final newMessage = await _messageRepo.getMessageById(row['id']);
           log('Latest message: ${newMessage.toJson().toString()}');
-          chats.firstWhere((chat) => chat.id == newMessage.to).lastMessage = newMessage;
+          final chat = chats.firstWhere((chat) => chat.id == newMessage.to);
+          chat.lastMessage = newMessage;
+          chats.remove(chat);
+          chats.insert(0, chat);
         }
         notifyListeners();
     });
