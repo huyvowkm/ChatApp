@@ -13,11 +13,27 @@ class MessageRepo {
     _messageRemote = messageRemote;
   }
 
-  SupabaseStreamBuilder initRealtimeMessagesStream(List<String> idChats) {
-    return _messageRemote.initRealtimeMessagesStream(idChats);
-  }
-
   Future<MessageModel> getMessageById(String idMessage) async {
     return await _messageRemote.getMessageById(idMessage);
   } 
+
+  Future<List<MessageModel>> getMessagesByChat(String idChat) async {
+    return await _messageRemote.getMessagesByChat(idChat);
+  }
+
+  SupabaseStreamBuilder initLastMessagesStream(List<String> idChats) {
+    return _messageRemote.initLastMessagesStream(idChats);
+  }
+
+  SupabaseStreamBuilder initRealtimeMessagesStream(String idChat) {
+    return _messageRemote.initRealtimeMessagesStream(idChat);
+  }
+
+  Future<void> sendMessage({required String content, required String from, required String to}) async {
+    await _messageRemote.sendMessage(
+      content: content, 
+      from: from, 
+      to: to
+    );
+  }
 }

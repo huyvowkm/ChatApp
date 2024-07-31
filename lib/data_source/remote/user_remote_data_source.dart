@@ -46,12 +46,24 @@ class UserRemoteDataSource {
     return _supabase.auth.currentUser;
   }
 
-  Future<UserModel> getUser(String id) async {
+  Future<UserModel> getUserById(String id) async {
     return await _supabase.from('user')
     .select()
     .eq('id', id)
     .limit(1)
     .single()
     .then((value) => UserModel.fromJson(value));
+  }
+
+  Future<List<UserModel>> filterUsersByName(String name, String currentUserId) async {
+    List<UserModel> users = [];
+    await _supabase.from('user')
+      .select()
+      .neq('id', currentUserId)
+      .ilike('name', '%$name%')
+      .then((value) {
+        users = value.map((userJson) => UserModel.fromJson(userJson)).toList();
+      });
+    return users;   
   }
 }

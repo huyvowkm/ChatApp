@@ -22,7 +22,7 @@ class UserRepo {
       if (authResponse.user == null) {
         return null;
       }
-      user = await _userRemote.getUser(authResponse.user!.id);
+      user = await _userRemote.getUserById(authResponse.user!.id);
       log(authResponse.session.toString());
       return user;
     } on AuthException catch(err) {
@@ -37,7 +37,7 @@ class UserRepo {
       if (authResponse.user == null) {
         return null;
       }
-      user = await _userRemote.getUser(authResponse.user!.id);
+      user = await _userRemote.getUserById(authResponse.user!.id);
       log(authResponse.session.toString());
       return user;
     } on AuthException catch (err) {
@@ -56,7 +56,7 @@ class UserRepo {
     if (userAuth == null) {
       return null;
     }
-    return await _userRemote.getUser(userAuth.id);
+    return await _userRemote.getUserById(userAuth.id);
   }
 
   User? checkAuthUser() {
@@ -64,9 +64,15 @@ class UserRepo {
     if (userAuth == null) {
       return null;
     }
-    _userRemote.getUser(userAuth.id).then((value) => user = value);
+    _userRemote.getUserById(userAuth.id).then((value) => user = value);
     return userAuth;
   }
-  
 
+  Future<UserModel> getUserById(String id) async {
+    return await _userRemote.getUserById(id);
+  }
+
+  Future<List<UserModel>> filterUsersByName(String name, String currentUserId) async {
+    return await _userRemote.filterUsersByName(name, currentUserId);
+  }
 }
