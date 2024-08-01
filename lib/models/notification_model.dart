@@ -2,16 +2,16 @@ class NotificationModel {
   NotificationModel({
     required this.title,
     required this.content,
-    required this.targetChatId
+    required this.targetUsersId
   });
 
   String title;
   String content;
-  String targetChatId;
+  List<String> targetUsersId; 
 
   Map<String, dynamic> toJson() => {
     'title': title,
     'content': content,
-    'target_chat_id': targetChatId,
+    'target_users_id': targetUsersId.join(','),
   };
 }

@@ -49,7 +49,6 @@ class ChatRemoteDataSource {
       .from('chat_user')
       .stream(primaryKey: ['id_chat, id_user'])
       .eq('id_user', idUser)
-      .order('created_at')
       .limit(1);
   }
 

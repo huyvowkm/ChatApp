@@ -18,7 +18,8 @@ serve(async (req) => {
     // Build OneSignal notification object
     const notification = new OneSignal.Notification()
     notification.app_id = _OnesignalAppId_
-    notification.include_external_user_ids = [record.target_chat_id]
+    const users = record.target_users_id.split(',')
+    notification.include_external_user_ids = users
     notification.headings = {
       en: record.title
     }
@@ -27,6 +28,7 @@ serve(async (req) => {
     }
     const onesignalApiRes = await onesignal.createNotification(notification)
 
+    console.log('Sent notification successfully');
     return new Response(
       JSON.stringify({ onesignalResponse: onesignalApiRes }),
       {

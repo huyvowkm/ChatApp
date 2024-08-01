@@ -18,6 +18,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
     ref.read(homeViewModel).getChatsByUser();
     ref.read(homeViewModel).initRealtimeChatsStream();
     ref.read(homeViewModel).autoUpdate();
+    ref.read(homeViewModel).loginToOneSignal();
   }
 
   @override

@@ -89,7 +89,8 @@ class ChatViewModel extends ChangeNotifier {
     _notificationRepo.createNotification(NotificationModel(
       title: _userRepo.user!.name,
       content: messageContent,
-      targetChatId: _chat!.id
+      targetUsersId: _chat!.users.where((user) => user.id != _userRepo.user!.id)
+        .map((user) => user.id).toList()
     ));
   }
 
