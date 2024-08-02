@@ -44,8 +44,8 @@ class ChatViewModel extends ChangeNotifier {
     user = _userRepo.user;
   }
 
-  void getChatInfo(ChatModel chat) {
-    _chat = chat;
+  Future<void> getChatInfo(String idChat) async {
+    _chat = await _chatRepo.getChatById(idChat, _userRepo.user!.id);
   }
 
   Future<void> getMessagesByChat(String idChat) async {

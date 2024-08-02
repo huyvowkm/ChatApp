@@ -1,12 +1,13 @@
-import 'package:chat_app/models/chat_model.dart';
 import 'package:chat_app/views/chat/chat_view_model.dart';
 import 'package:chat_app/views/chat/widgets/message_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ChatView extends ConsumerStatefulWidget {
-  ChatModel chat;
-  ChatView(this.chat, {super.key});
+  String idChat;
+  String name;
+  String avatar;
+  ChatView(this.idChat, this.name, this.avatar, {super.key});
 
   @override
   ConsumerState<ChatView> createState() => _ChatViewState();
@@ -18,10 +19,10 @@ class _ChatViewState extends ConsumerState<ChatView> {
   void initState() {
     super.initState();
     ref.read(chatViewModel).getCurrentUser();
-    ref.read(chatViewModel).getChatInfo(widget.chat);
-    if (widget.chat.id.isNotEmpty) {
-      ref.read(chatViewModel).getMessagesByChat(widget.chat.id);
-      ref.read(chatViewModel).initRealtimeMessagesStream(widget.chat.id);
+    ref.read(chatViewModel).getChatInfo(widget.idChat);
+    if (widget.idChat.isNotEmpty) {
+      ref.read(chatViewModel).getMessagesByChat(widget.idChat);
+      ref.read(chatViewModel).initRealtimeMessagesStream(widget.idChat);
     }
   }
 
@@ -35,7 +36,7 @@ class _ChatViewState extends ConsumerState<ChatView> {
   
   AppBar _appBar() {
     return AppBar(
-      title: Text(widget.chat.name)
+      title: Text(widget.name)
     );
   }
 
@@ -92,7 +93,7 @@ class _ChatViewState extends ConsumerState<ChatView> {
           ),
           IconButton(
             onPressed: ref.read(chatViewModel).canSendMessage
-            ? () async => widget.chat.id.isNotEmpty
+            ? () async => widget.idChat.isNotEmpty
               ? ref.read(chatViewModel).sendMessage()
               : ref.read(chatViewModel).sendFirstMessage()
             : null,

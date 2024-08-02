@@ -7,6 +7,7 @@ import 'package:chat_app/views/register/register_view.dart';
 import 'package:chat_app/views/search/search_view.dart';
 import 'package:chat_app/views/splash/splash_view.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class Routes {
   static late Map<String, Widget Function(BuildContext)> _route;
@@ -20,10 +21,43 @@ class Routes {
       '/account': (_) => const AccountView(),
       '/chat': (context) {
         final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-        return ChatView(args['chat']);
+        return ChatView(args['id_chat'], args['name'], args['avatar']);
       },
       '/search': (_) => const SearchView(),
     };
     return _route;
   }
 }
+
+// final routeConfig = GoRouter(
+//   initialLocation: '/splash',
+//   routes: [
+//     GoRoute(
+//       path: '/splash',
+//       builder: (_, __) => const SplashView()
+//     ),
+//     GoRoute(
+//       path: '/home',
+//       builder: (_, __) => const HomeView()
+//     ),
+//     GoRoute(
+//       path: '/login',
+//       builder: (_, __) => const LoginView()
+//     ),
+//     GoRoute(
+//       path: '/register', 
+//       builder: (_, __) => const RegisterView()
+//     ),
+//     GoRoute(
+//       path: '/account',
+//       builder: (_, __) => const AccountView()
+//     ),
+//     GoRoute(
+//       path: '/chat/:id',
+//       builder: (context, state) {
+        
+//       }
+//     ),
+//   ]
+
+// );

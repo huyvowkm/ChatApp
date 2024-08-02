@@ -9,7 +9,11 @@ class SearchResultWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, '/chat', arguments: { 'chat': chat });
+        Navigator.pushNamed(context, '/chat', arguments: { 
+          'id_chat': chat.id,
+          'name': chat.name,
+          'avatar': chat.avatar 
+        });
       },
       child: ListTile(
         leading: chat.avatar.isEmpty ? const FlutterLogo(size: 30): Image.network(chat.avatar),

@@ -26,6 +26,8 @@ serve(async (req) => {
     notification.contents = {
       en: record.content,
     }
+    const idChat = record.id_chat
+    notification.app_url=`https://lspqgm0n-51502.asse.devtunnels.ms/chat?id_chat=${id_chat}&name=${record.title}&avatar=`
     const onesignalApiRes = await onesignal.createNotification(notification)
 
     console.log('Sent notification successfully');

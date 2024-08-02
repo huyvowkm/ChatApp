@@ -1,0 +1,9 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.example.chat_app",
+    "sha256_cert_fingerprints":
+    ["1E:3E:F7:39:69:F5:49:CA:2D:0D:95:21:58:13:DB:40:9D:33:6E:F8:0A:CA:F9:4D:EA:10:A3:2E:99:85:11:CD"]
+  }
+}]
