@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:chat_app/models/message_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final messageRemoteProvider = Provider<MessageRemoteDataSource>(
@@ -59,5 +62,18 @@ class MessageRemoteDataSource {
       'from': from,
       'to': to
     });
-  } 
+  }
+
+  Future<String> sendImage({required XFile image}) async {
+    final fileExt = image.path.split('.').last;
+    final filePath = '${DateTime.now().millisecondsSinceEpoch}.$fileExt';
+    await _supabase.storage.from('media').upload(
+      filePath,
+      File(image.path),
+      fileOptions: FileOptions(contentType: image.mimeType),
+    );
+    return _supabase.storage
+      .from('media')
+      .getPublicUrl(filePath);
+  }
 }

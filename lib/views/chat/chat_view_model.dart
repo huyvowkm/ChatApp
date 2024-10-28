@@ -10,8 +10,10 @@ import 'package:chat_app/repositories/notification_repo.dart';
 import 'package:chat_app/repositories/user_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-final chatViewModel = ChangeNotifierProvider.autoDispose(
+final chatViewModel = ChangeNotifierProvider.autoDispose<ChatViewModel>(
   (ref) => ChatViewModel(
     ref.read(chatRepoProvider), 
     ref.read(userRepoProvider), 
@@ -34,28 +36,28 @@ class ChatViewModel extends ChangeNotifier {
   late final NotificationRepo _notificationRepo;
   StreamSubscription? realtimeMessages;
   List<MessageModel> messages = List.empty(growable:  true);
-  UserModel? user;
-  ChatModel? _chat;
+  ChatModel chat = ChatModel();
+  late UserModel currentUser;
   final sendMessageController = TextEditingController();
   final messageScrollController = ScrollController();
   bool canSendMessage = false;
 
-  void getCurrentUser() {
-    user = _userRepo.user;
+  void getChatUsers(List<UserModel> users) {
+    chat.users = users;
+    currentUser = _userRepo.user!;
   }
 
   Future<void> getChatInfo(String idChat) async {
-    _chat = await _chatRepo.getChatById(idChat, _userRepo.user!.id);
+    chat = await _chatRepo.getChatById(idChat, _userRepo.user!.id);
   }
 
   Future<void> getMessagesByChat(String idChat) async {
     messages = await _messageRepo.getMessagesByChat(idChat);
     log('Messages: ${messages.map((message) => message.toJson())}');
     notifyListeners();
-    // scrollDown();
   }
 
-  void initRealtimeMessagesStream(String idChat)  {
+  void initRealtimeMessagesStream(String idChat) {
     realtimeMessages?.cancel();
     realtimeMessages = _messageRepo
       .initRealtimeMessagesStream(idChat)
@@ -82,14 +84,14 @@ class ChatViewModel extends ChangeNotifier {
     await _messageRepo.sendMessage(
       content: messageContent,
       from: _userRepo.user!.id,
-      to: _chat!.id
+      to: chat.id
     );
     sendMessageController.clear();
     scrollDown();
     _notificationRepo.createNotification(NotificationModel(
       title: _userRepo.user!.name,
       content: messageContent,
-      targetUsersId: _chat!.users.where((user) => user.id != _userRepo.user!.id)
+      targetUsersId: chat.users.where((user) => user.id != _userRepo.user!.id)
         .map((user) => user.id).toList()
     ));
   }
@@ -98,18 +100,19 @@ class ChatViewModel extends ChangeNotifier {
   Future<void> sendFirstMessage() async {
     // create new chat
     final newChat = await _chatRepo.addNewChat();
-    _chat!.id = newChat.id;
-    _chat!.createdAt = newChat.createdAt;
+    chat.id = newChat.id;
+    chat.name = newChat.name;
 
     // create new message
     await sendMessage();
 
     // add new user to chat
-    for (var user in _chat!.users) {
-      _chatRepo.addNewChatUser(_chat!.id, user.id);
+    for (var user in chat.users) {
+      await _chatRepo.addNewChatUser(chat.id, user.id);
     }
-    getMessagesByChat(_chat!.id);
-    initRealtimeMessagesStream(_chat!.id);
+  
+    getMessagesByChat(chat.id);
+    initRealtimeMessagesStream(chat.id);
     scrollDown();
     notifyListeners();
   }
@@ -123,4 +126,32 @@ class ChatViewModel extends ChangeNotifier {
     realtimeMessages?.cancel();
     super.dispose();
   }
+
+  Future<void> pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    // print(images.map((img) => img.path));
+    if (image == null) return;
+    try {
+      final imageUrl = await _messageRepo.sendImage(image: image);
+      await _messageRepo.sendMessage(
+        content: imageUrl,
+        from: _userRepo.user!.id,
+        to: chat.id,
+      );
+      scrollDown();
+      _notificationRepo.createNotification(NotificationModel(
+        title: _userRepo.user!.name,
+        content: 'New message',
+        targetUsersId: chat.users.where((user) => user.id != _userRepo.user!.id)
+          .map((user) => user.id).toList()
+      )); 
+    } on StorageException catch (error) {
+      debugPrint(error.toString());
+    } catch (error) {
+      debugPrint(error.toString());
+    }
+  }
+
+  bool isPickingImage = false;
 }

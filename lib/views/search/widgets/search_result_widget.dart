@@ -12,7 +12,8 @@ class SearchResultWidget extends StatelessWidget {
         Navigator.pushNamed(context, '/chat', arguments: { 
           'id_chat': chat.id,
           'name': chat.name,
-          'avatar': chat.avatar 
+          'avatar': chat.avatar,
+          'users': chat.users,
         });
       },
       child: ListTile(

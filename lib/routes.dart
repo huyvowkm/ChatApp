@@ -21,7 +21,12 @@ class Routes {
       '/account': (_) => const AccountView(),
       '/chat': (context) {
         final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-        return ChatView(args['id_chat'], args['name'], args['avatar']);
+        return ChatView(
+          idChat: args['id_chat'] ?? '',
+          name: args['name'] ?? '',
+          avatar: args['avatar'] ?? '',
+          users: args['users'] ?? [],
+        );
       },
       '/search': (_) => const SearchView(),
     };
@@ -29,35 +34,46 @@ class Routes {
   }
 }
 
-// final routeConfig = GoRouter(
-//   initialLocation: '/splash',
-//   routes: [
-//     GoRoute(
-//       path: '/splash',
-//       builder: (_, __) => const SplashView()
-//     ),
-//     GoRoute(
-//       path: '/home',
-//       builder: (_, __) => const HomeView()
-//     ),
-//     GoRoute(
-//       path: '/login',
-//       builder: (_, __) => const LoginView()
-//     ),
-//     GoRoute(
-//       path: '/register', 
-//       builder: (_, __) => const RegisterView()
-//     ),
-//     GoRoute(
-//       path: '/account',
-//       builder: (_, __) => const AccountView()
-//     ),
-//     GoRoute(
-//       path: '/chat/:id',
-//       builder: (context, state) {
-        
-//       }
-//     ),
-//   ]
-
-// );
+class RoutingService {
+  static final routeConfig = GoRouter(
+    initialLocation: '/splash',
+    routes: [
+      GoRoute(
+        path: '/splash',
+        builder: (_, __) => const SplashView()
+      ),
+      GoRoute(
+        path: '/home',
+        builder: (_, __) => const HomeView()
+      ),
+      GoRoute(
+        path: '/login',
+        builder: (_, __) => const LoginView()
+      ),
+      GoRoute(
+        path: '/register', 
+        builder: (_, __) => const RegisterView()
+      ),
+      GoRoute(
+        path: '/account',
+        builder: (_, __) => const AccountView()
+      ),
+      GoRoute(
+        path: '/chat',
+        builder: (context, state) {
+          final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+          return ChatView(
+            idChat: args['id_chat'] ?? '',
+            name: args['name'] ?? '',
+            avatar: args['avatar'] ?? '',
+            users: args['users'] ?? [],
+          );
+        }
+      ),
+      GoRoute(
+        path: '/search',
+        builder: (_, __) => const SearchView()
+      ),
+    ]
+  );
+}

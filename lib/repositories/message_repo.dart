@@ -1,6 +1,7 @@
 import 'package:chat_app/data_source/remote/message_remote_data_source.dart';
 import 'package:chat_app/models/message_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final messageRepoProvider = Provider<MessageRepo>(
@@ -35,5 +36,9 @@ class MessageRepo {
       from: from, 
       to: to
     );
+  }
+
+  Future<String> sendImage({required XFile image}) async {
+    return await _messageRemote.sendImage(image: image);
   }
 }
