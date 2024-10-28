@@ -6,6 +6,7 @@ import 'package:chat_app/repositories/message_repo.dart';
 import 'package:chat_app/repositories/user_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 final homeViewModel = ChangeNotifierProvider(
   (ref) => HomeViewModel(
@@ -29,9 +30,10 @@ class HomeViewModel extends ChangeNotifier {
   StreamSubscription? realtimeMessage;
   List<ChatModel> chats = List.empty(growable: true);
 
-  // Future<void> getCurrentUser() async {
-  //   user = await _userRepo.checkCurrentUser();
-  // }
+  Future<void> loginToOneSignal() async {
+    await OneSignal.User.addAlias('external_id', _userRepo.user!.id);
+    await OneSignal.login(_userRepo.user!.id);
+  }
 
   Future<void> getChatsByUser() async {
     chats = await _chatRepo.getChatsByUser(_userRepo.user!.id);
@@ -66,7 +68,10 @@ class HomeViewModel extends ChangeNotifier {
         for (var row in data) {
           final newMessage = await _messageRepo.getMessageById(row['id']);
           log('Latest message: ${newMessage.toJson().toString()}');
-          chats.firstWhere((chat) => chat.id == newMessage.to).lastMessage = newMessage;
+          final chat = chats.firstWhere((chat) => chat.id == newMessage.to);
+          chat.lastMessage = newMessage;
+          chats.remove(chat);
+          chats.insert(0, chat);
         }
         notifyListeners();
     });

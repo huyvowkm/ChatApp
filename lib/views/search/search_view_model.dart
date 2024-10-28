@@ -26,11 +26,7 @@ class SearchViewModel extends ChangeNotifier {
     final users = await _userRepo.filterUsersByName(name, _userRepo.user!.id);
     for (var user in users) {
       if (chats.indexWhere((chat) => chat.name == user.name) == -1) {
-        chats.add(ChatModel(
-          name: user.name,
-          avatar: user.avatar,
-          users: [user, _userRepo.user!]
-        ));
+        chats.add(genTempChat(user));
       }
     }
     result = chats;

@@ -11,7 +11,11 @@ class ChatWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return ListTile(
       onTap: () {
-        Navigator.pushNamed(context, '/chat', arguments: { 'chat' : chat });
+        Navigator.pushNamed(context, '/chat', arguments: { 
+          'id_chat' : chat.id, 
+          'name': chat.name,
+          'avatar': chat.avatar
+        });
       },
       leading: chat.avatar == '' ? const FlutterLogo(size: 30) : Image.network(chat.avatar),
       title: Text(chat.name, overflow: TextOverflow.ellipsis),

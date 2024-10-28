@@ -15,9 +15,9 @@ class _HomeViewState extends ConsumerState<HomeView> {
   @override
   void initState() {
     super.initState();
-    ref.read(homeViewModel).getChatsByUser();
     ref.read(homeViewModel).initRealtimeChatsStream();
     ref.read(homeViewModel).autoUpdate();
+    ref.read(homeViewModel).loginToOneSignal();
   }
 
   @override
@@ -41,13 +41,17 @@ class _HomeViewState extends ConsumerState<HomeView> {
   }
 
   Widget _body(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(10),
-      children: [
-        _searchBar(context),
-        const SizedBox(height: 10),
-        _chatWidgets(),
-      ]
+    return RefreshIndicator(
+      onRefresh: () => ref.read(homeViewModel).getChatsByUser(),
+      child: ListView(
+        padding: const EdgeInsets.all(10),
+        physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+        children: [
+          _searchBar(context),
+          const SizedBox(height: 10),
+          _chatWidgets(),
+        ],
+      ),
     );
   }
 
@@ -79,8 +83,10 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
   Widget _chatWidgets() {
     return Column(
-      children: ref.watch(homeViewModel).chats
-                .map((chat) => ChatWidget(chat)).toList(),
+      children: 
+        ref.watch(homeViewModel).chats.map(
+          (chat) => ChatWidget(chat)
+        ).toList(),
     );
   }
 }
